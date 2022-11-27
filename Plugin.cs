@@ -15,14 +15,10 @@ namespace MyFirstPlugin
 {
     [BepInDependency("com.bepis.r2api")]
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [NetworkCompatibility(CompatibilityLevel.NoNeedForSync, VersionStrictness.DifferentModVersionsAreOk)]
     public class Plugin : BaseUnityPlugin
     {
         private ConfigEntry<string> configAoE;
-        private ConfigEntry<bool> configAoEDisplay;
-
-        int whiteMod = 2;
-        int greenMod = 3;
-        int redMod = 4;
 
         private void Awake()
         {
@@ -30,19 +26,10 @@ namespace MyFirstPlugin
             configAoE = Config.Bind("Difficulty",
                 "DifficultySetting",
                 "Normal",
-                "A difficulty setting for how hard the item generation gets. Vanilla, Normal, Hard, Chaos");
-
-            configAoEDisplay = Config.Bind("Toggles",
-                "DisplayDifficulty",
-                true,
-                "show what diff you're on.");
+                "A difficulty setting for how hard the item generation gets. Normal, Hard, Chaos");
 
             // Plugin startup logic
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
-
-            //other logic
-            if(configAoEDisplay.Value)
-                Logger.LogInfo(configAoE.Value);
 
 
             // this is ripped from the other mod in the folder.
@@ -59,27 +46,30 @@ namespace MyFirstPlugin
                     {
                         case ItemTier.Tier1:
                         case ItemTier.VoidTier1:
-                            Logger.LogInfo($"{AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(2, configAoE.Value)} white items added to enemy team");
                             if (AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(2, configAoE.Value) < 1)
                             {
+                                Chat.AddMessage("1 white item added to enemy team");
                                 return 1;
                             }
+                            Chat.AddMessage($"{AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(2, configAoE.Value)} white items added to enemy team");
                             return AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(2, configAoE.Value);
                         case ItemTier.Tier2:
                         case ItemTier.VoidTier2:
-                            Logger.LogInfo($"{AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(3, configAoE.Value)} green items added to enemy team");
                             if (AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(3, configAoE.Value) < 1)
                             {
+                                Chat.AddMessage("1 green item added to enemy team");
                                 return 1;
                             }
+                            Chat.AddMessage($"{AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(3, configAoE.Value)} green items added to enemy team");
                             return AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(3, configAoE.Value);
                         case ItemTier.Tier3:
                         case ItemTier.VoidTier3:
-                            Logger.LogInfo($"{AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(5, configAoE.Value)} red items added to enemy team");
                             if (AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(5, configAoE.Value) < 1)
                             {
+                                Chat.AddMessage("1 red item added to enemy team");
                                 return 1;
                             }
+                            Chat.AddMessage($"{AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(5, configAoE.Value)} red items added to enemy team");
                             return AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(5, configAoE.Value);
                         default:
                             return itemCount;
@@ -114,7 +104,7 @@ namespace MyFirstPlugin
                 case "Hard":
                     return itemTier/2;
                 case "Chaos":
-                    return itemTier/3;
+                    return itemTier/itemTier;
                 default:
                     return Run.instance.stageClearCount;
             }
