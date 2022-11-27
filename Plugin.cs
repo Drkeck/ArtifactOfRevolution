@@ -59,41 +59,33 @@ namespace MyFirstPlugin
                     {
                         case ItemTier.Tier1:
                         case ItemTier.VoidTier1:
-                            Logger.LogInfo($"{(Run.instance.stageClearCount + 1)/whiteMod} white items added to enemy team");
-                            if (Run.instance.stageClearCount/whiteMod < 1)
+                            Logger.LogInfo($"{AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(2, configAoE.Value)} white items added to enemy team");
+                            if (AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(2, configAoE.Value) < 1)
                             {
                                 return 1;
                             }
-                            return Run.instance.stageClearCount/whiteMod;
+                            return AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(2, configAoE.Value);
                         case ItemTier.Tier2:
                         case ItemTier.VoidTier2:
-                            Logger.LogInfo($"{(Run.instance.stageClearCount + 1)/greenMod} green items added to enemy team");
-                            if (Run.instance.stageClearCount/greenMod < 1)
+                            Logger.LogInfo($"{AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(3, configAoE.Value)} green items added to enemy team");
+                            if (AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(3, configAoE.Value) < 1)
                             {
                                 return 1;
                             }
-                            return Run.instance.stageClearCount/greenMod;
+                            return AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(3, configAoE.Value);
                         case ItemTier.Tier3:
                         case ItemTier.VoidTier3:
-                            Logger.LogInfo($"{(Run.instance.stageClearCount + 1)/redMod} red items added to enemy team");
-                            if (Run.instance.stageClearCount/redMod < 1)
+                            Logger.LogInfo($"{AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(5, configAoE.Value)} red items added to enemy team");
+                            if (AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(5, configAoE.Value) < 1)
                             {
                                 return 1;
                             }
-                            return Run.instance.stageClearCount/redMod;
+                            return AccurateStageCount(Run.instance.stageClearCount)/DifficultyTable(5, configAoE.Value);
                         default:
                             return itemCount;
                     }
                 });
             };
-
-            // we have other methods we can call but i am still trying to figure out what sort of manipulation i am able to do with this thing
-            On.RoR2.SceneDirector.Start += (orig, self) =>
-            {
-            Logger.LogInfo(Run.instance.stageClearCount / 2);
-                orig(self);
-            };
-
         }
 
         public static void GrantMonsterTeamItem(string itemName, int count)
@@ -111,6 +103,26 @@ namespace MyFirstPlugin
         public static void GrantMonsterTeamItem(ItemIndex itemIndex, int count)
         {
             MonsterTeamGainsItemsArtifactManager.monsterTeamInventory.GiveItem(itemIndex, count);
+        }
+
+        private static int DifficultyTable(int itemTier, string diff)
+        {
+            switch (diff)
+            {
+                case "Normal":
+                    return itemTier;
+                case "Hard":
+                    return itemTier/2;
+                case "Chaos":
+                    return itemTier/3;
+                default:
+                    return Run.instance.stageClearCount;
+            }
+        }
+
+        private static int AccurateStageCount(int stageCount)
+        {
+            return stageCount + 1;
         }
     }
 }
