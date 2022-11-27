@@ -1,0 +1,10 @@
+{
+    "name": "Artifact Of Revolution",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Drkeck/ArtifactOfRevolution",
+    "description": "Alters the amount of items given when using the Evolution Artifact. Currently there area 3 mode to this mod: Normal, Hard, and Chaos.",
+    "dependencies": [
+        "bbepis-BepInExPack-3.0.0",
+        "tristanmcpherson-R2API-2.3.7"
+    ]
+}
